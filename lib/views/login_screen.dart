@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:independent_absensi/extensions/navigator.dart';
+import 'package:independent_absensi/views/register_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -172,12 +174,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     const Text("Belum memiliki akun ? "),
                     GestureDetector(
                       onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => const LoginScreen(),
-                          ),
-                        );
+                        context.push(RegisterScreen());
                       },
                       child: const Text(
                         "Buat Akun",

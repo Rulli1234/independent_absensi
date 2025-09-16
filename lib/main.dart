@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:independent_absensi/views/register_screen.dart';
+import 'package:independent_absensi/views/login_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -31,7 +31,7 @@ class MyApp extends StatelessWidget {
         // tested with just a hot reload.
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
       ),
-      home: RegisterScreen(),
+      home: LoginScreen(),
     );
   }
 }
