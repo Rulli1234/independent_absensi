@@ -1,33 +1,31 @@
 // To parse this JSON data, do
 //
-//     final checkInResponse = checkInResponseFromJson(jsonString);
+//     final checkInAbsen = checkInAbsenFromJson(jsonString);
 
 import 'dart:convert';
 
-CheckInResponse checkInResponseFromJson(String str) =>
-    CheckInResponse.fromJson(json.decode(str));
+CheckInAbsen checkInAbsenFromJson(String str) =>
+    CheckInAbsen.fromJson(json.decode(str));
 
-String checkInResponseToJson(CheckInResponse data) =>
-    json.encode(data.toJson());
+String checkInAbsenToJson(CheckInAbsen data) => json.encode(data.toJson());
 
-class CheckInResponse {
+class CheckInAbsen {
   String? message;
-  CheckInData? data;
+  Data? data;
 
-  CheckInResponse({this.message, this.data});
+  CheckInAbsen({this.message, this.data});
 
-  factory CheckInResponse.fromJson(Map<String, dynamic> json) =>
-      CheckInResponse(
-        message: json["message"],
-        data: json["data"] == null ? null : CheckInData.fromJson(json["data"]),
-      );
+  factory CheckInAbsen.fromJson(Map<String, dynamic> json) => CheckInAbsen(
+    message: json["message"],
+    data: json["data"] == null ? null : Data.fromJson(json["data"]),
+  );
 
   Map<String, dynamic> toJson() => {"message": message, "data": data?.toJson()};
 }
 
-class CheckInData {
+class Data {
   int? id;
-  String? attendanceDate;
+  DateTime? attendanceDate;
   String? checkInTime;
   double? checkInLat;
   double? checkInLng;
@@ -36,7 +34,7 @@ class CheckInData {
   String? status;
   dynamic alasanIzin;
 
-  CheckInData({
+  Data({
     this.id,
     this.attendanceDate,
     this.checkInTime,
@@ -48,12 +46,14 @@ class CheckInData {
     this.alasanIzin,
   });
 
-  factory CheckInData.fromJson(Map<String, dynamic> json) => CheckInData(
+  factory Data.fromJson(Map<String, dynamic> json) => Data(
     id: json["id"],
-    attendanceDate: json["attendance_date"],
+    attendanceDate: json["attendance_date"] == null
+        ? null
+        : DateTime.parse(json["attendance_date"]),
     checkInTime: json["check_in_time"],
-    checkInLat: (json["check_in_lat"] as num?)?.toDouble(),
-    checkInLng: (json["check_in_lng"] as num?)?.toDouble(),
+    checkInLat: json["check_in_lat"]?.toDouble(),
+    checkInLng: json["check_in_lng"]?.toDouble(),
     checkInLocation: json["check_in_location"],
     checkInAddress: json["check_in_address"],
     status: json["status"],
@@ -62,7 +62,8 @@ class CheckInData {
 
   Map<String, dynamic> toJson() => {
     "id": id,
-    "attendance_date": attendanceDate,
+    "attendance_date":
+        "${attendanceDate!.year.toString().padLeft(4, '0')}-${attendanceDate!.month.toString().padLeft(2, '0')}-${attendanceDate!.day.toString().padLeft(2, '0')}",
     "check_in_time": checkInTime,
     "check_in_lat": checkInLat,
     "check_in_lng": checkInLng,

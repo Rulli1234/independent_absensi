@@ -3,7 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:independent_absensi/api/auth_service.dart';
 import 'package:independent_absensi/extensions/navigator.dart';
-import 'package:independent_absensi/views/register_screen.dart';
+import 'package:independent_absensi/views/auth/register_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});

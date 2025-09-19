@@ -1,29 +1,36 @@
 import 'package:flutter/material.dart';
-import 'package:independent_absensi/shared_perfrence/shared_perfrence.dart';
-import 'package:independent_absensi/views/login_screen.dart';
+import 'package:independent_absensi/views/auth/login_screen.dart';
 
-void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-
-  // cek login dari SharedPreferences
-  final isLoggedIn = await PreferenceHandler.getLogin() ?? false;
-
-  runApp(MyApp(isLoggedIn: isLoggedIn));
+void main() {
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  final bool isLoggedIn;
-  const MyApp({super.key, required this.isLoggedIn});
+  const MyApp({super.key});
 
+  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Absensi PPKD',
+      title: 'Flutter Demo',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        // This is the theme of your application.
+        //
+        // TRY THIS: Try running your application with "flutter run". You'll see
+        // the application has a purple toolbar. Then, without quitting the app,
+        // try changing the seedColor in the colorScheme below to Colors.green
+        // and then invoke "hot reload" (save your changes or press the "hot
+        // reload" button in a Flutter-supported IDE, or press "r" if you used
+        // the command line to start the app).
+        //
+        // Notice that the counter didn't reset back to zero; the application
+        // state is not lost during the reload. To reset the state, use hot
+        // restart instead.
+        //
+        // This works for code too, not just values: Most code changes can be
+        // tested with just a hot reload.
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
       ),
-      // kalau login true → langsung ke dashboard
-      // kalau belum login → ke halaman login
       home: LoginScreen(),
     );
   }
