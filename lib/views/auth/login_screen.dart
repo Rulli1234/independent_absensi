@@ -1,12 +1,15 @@
 // ignore_for_file: deprecated_member_use, use_build_context_synchronously
 
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:independent_absensi/api/auth_service.dart';
 import 'package:independent_absensi/extensions/navigator.dart';
+import 'package:independent_absensi/shared_perfrence/shared_perfrence.dart';
 import 'package:independent_absensi/views/auth/register_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
+  static const id = "/login_screen";
 
   @override
   State<LoginScreen> createState() => _LoginScreenState();
@@ -15,8 +18,10 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
 
   bool obscurePassword = true;
+  bool isLoading = false;
 
   @override
   Widget build(BuildContext context) {
@@ -83,137 +88,135 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                     ],
                   ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      const Text(
-                        "Email",
-                        style: TextStyle(color: Colors.black54),
-                      ),
-                      const SizedBox(height: 8),
-                      TextField(
-                        controller: emailController,
-                        decoration: InputDecoration(
-                          filled: true,
-                          fillColor: Colors.grey[200],
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12),
-                            borderSide: BorderSide.none,
-                          ),
+                  child: Form(
+                    key: _formKey,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        const Text(
+                          "Email",
+                          style: TextStyle(color: Colors.black54),
                         ),
-                      ),
-                      const SizedBox(height: 16),
-                      const Text(
-                        "Password",
-                        style: TextStyle(color: Colors.black54),
-                      ),
-                      const SizedBox(height: 8),
-                      TextField(
-                        controller: passwordController,
-                        obscureText: obscurePassword,
-                        decoration: InputDecoration(
-                          filled: true,
-                          fillColor: Colors.grey[200],
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12),
-                            borderSide: BorderSide.none,
-                          ),
-                          suffixIcon: IconButton(
-                            icon: Icon(
-                              obscurePassword
-                                  ? Icons.visibility_off
-                                  : Icons.visibility,
-                              color: Colors.grey,
+                        const SizedBox(height: 8),
+                        TextFormField(
+                          controller: emailController,
+                          decoration: InputDecoration(
+                            filled: true,
+                            fillColor: Colors.grey[200],
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12),
+                              borderSide: BorderSide.none,
                             ),
+                          ),
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return "Email tidak boleh kosong";
+                            }
+                            if (!value.contains("@")) {
+                              return "Email tidak valid";
+                            }
+                            return null;
+                          },
+                        ),
+                        const SizedBox(height: 16),
+                        const Text(
+                          "Password",
+                          style: TextStyle(color: Colors.black54),
+                        ),
+                        const SizedBox(height: 8),
+                        TextFormField(
+                          controller: passwordController,
+                          obscureText: obscurePassword,
+                          decoration: InputDecoration(
+                            filled: true,
+                            fillColor: Colors.grey[200],
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12),
+                              borderSide: BorderSide.none,
+                            ),
+                            suffixIcon: IconButton(
+                              icon: Icon(
+                                obscurePassword
+                                    ? Icons.visibility_off
+                                    : Icons.visibility,
+                                color: Colors.grey,
+                              ),
+                              onPressed: () {
+                                setState(() {
+                                  obscurePassword = !obscurePassword;
+                                });
+                              },
+                            ),
+                          ),
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return "Password tidak boleh kosong";
+                            }
+                            return null;
+                          },
+                        ),
+                        const SizedBox(height: 10),
+                        Align(
+                          alignment: Alignment.centerRight,
+                          child: TextButton(
                             onPressed: () {
-                              setState(() {
-                                obscurePassword = !obscurePassword;
-                              });
+                              // TODO: fungsi reset password
+                              print("Reset Password");
                             },
+                            child: const Text(
+                              "Reset Password",
+                              style: TextStyle(color: Colors.black87),
+                            ),
                           ),
                         ),
-                      ),
-                      const SizedBox(height: 10),
-                      Align(
-                        alignment: Alignment.centerRight,
-                        child: TextButton(
-                          onPressed: () {},
-                          child: const Text(
-                            "Reset Password",
-                            style: TextStyle(color: Colors.black87),
+                        const SizedBox(height: 12),
+                        ElevatedButton(
+                          onPressed: isLoading ? null : _handleLogin,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color(0xFF5585F8),
+                            foregroundColor: Colors.white,
+                            padding: const EdgeInsets.symmetric(vertical: 14),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
                           ),
-                        ),
-                      ),
-                      const SizedBox(height: 12),
-                      ElevatedButton(
-                        onPressed: () async {
-                          final email = emailController.text.trim();
-                          final password = passwordController.text.trim();
-
-                          if (email.isEmpty || password.isEmpty) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text("Email & Password harus diisi"),
-                              ),
-                            );
-                            return;
-                          }
-
-                          final result = await AuthService.login(
-                            email: email,
-                            password: password,
-                          );
-
-                          if (result['success'] == true) {
-                            // navigasi ke dashboard
-                            Navigator.pushReplacementNamed(
-                              context,
-                              "/dashboard",
-                            );
-                          } else {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text(
-                                  result['message'] ?? "Login gagal",
+                          child: isLoading
+                              ? const CircularProgressIndicator(
+                                  color: Colors.white,
+                                )
+                              : const Text(
+                                  "Masuk",
+                                  style: TextStyle(fontSize: 16),
                                 ),
-                              ),
-                            );
-                          }
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFF5585F8),
-                          foregroundColor: Colors.white,
-                          padding: const EdgeInsets.symmetric(vertical: 14),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
-                          ),
                         ),
-                        child: const Text(
-                          "Masuk",
-                          style: TextStyle(fontSize: 16),
-                        ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
 
                 const SizedBox(height: 20),
 
-                // Text bawah
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Text("Belum memiliki akun ? "),
-                    GestureDetector(
-                      onTap: () {
-                        context.push(RegisterScreen());
-                      },
-                      child: const Text(
-                        "Buat Akun",
-                        style: TextStyle(fontWeight: FontWeight.bold),
-                      ),
+                // Text bawah dengan TapGestureRecognizer
+                Center(
+                  child: Text.rich(
+                    TextSpan(
+                      text: "Belum memiliki akun? ",
+                      style: const TextStyle(color: Colors.white),
+                      children: [
+                        TextSpan(
+                          text: "Buat Akun",
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                          recognizer: TapGestureRecognizer()
+                            ..onTap = () {
+                              context.push(const RegisterScreen());
+                            },
+                        ),
+                      ],
                     ),
-                  ],
+                  ),
                 ),
                 const SizedBox(height: 30),
               ],
@@ -222,6 +225,32 @@ class _LoginScreenState extends State<LoginScreen> {
         ],
       ),
     );
+  }
+
+  Future<void> _handleLogin() async {
+    if (_formKey.currentState!.validate()) {
+      setState(() => isLoading = true);
+
+      final email = emailController.text.trim();
+      final password = passwordController.text.trim();
+
+      final result = await AuthService.login(email: email, password: password);
+
+      setState(() => isLoading = false);
+
+      if (result['success'] == true) {
+        // Simpan login & token
+        await PreferenceHandler.saveLogin();
+        await PreferenceHandler.saveToken(result['token']);
+
+        // 🚀 langsung push ke dashboard
+        context.pushReplacementNamed("/dashboard_absen");
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(result['message'] ?? "Login gagal")),
+        );
+      }
+    }
   }
 }
 

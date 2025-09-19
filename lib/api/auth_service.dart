@@ -22,8 +22,8 @@ class AuthService {
         // contoh response {"success": true, "token": "...", "user": {...}}
         if (data['success'] == true) {
           final token = data['token'];
-          PreferenceHandler.saveLogin();
-          PreferenceHandler.saveToken(token);
+          await PreferenceHandler.saveLogin();
+          await PreferenceHandler.saveToken(token);
         }
 
         return data;

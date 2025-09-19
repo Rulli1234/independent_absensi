@@ -10,6 +10,7 @@ import 'package:independent_absensi/api/endpoint.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
+  static const id = "/register_screen";
 
   @override
   State<RegisterScreen> createState() => _RegisterScreenState();
