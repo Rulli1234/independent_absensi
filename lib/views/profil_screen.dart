@@ -1,33 +1,13 @@
 import 'package:flutter/material.dart';
 
-void main() {
-  runApp(profil_screen());
-}
-
-class profil_screen extends StatelessWidget {
-  const profil_screen({super.key});
+class ProfileScreen extends StatefulWidget {
+  const ProfileScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Profil Akun',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-        visualDensity: VisualDensity.adaptivePlatformDensity,
-      ),
-      home: ProfilePage(),
-    );
-  }
+  State<ProfileScreen> createState() => _ProfileScreenState();
 }
 
-class ProfilePage extends StatefulWidget {
-  const ProfilePage({super.key});
-
-  @override
-  _ProfilePageState createState() => _ProfilePageState();
-}
-
-class _ProfilePageState extends State<ProfilePage> {
+class _ProfileScreenState extends State<ProfileScreen> {
   final TextEditingController _nameController = TextEditingController(
     text: 'Khoerullisnyah',
   );
@@ -40,13 +20,13 @@ class _ProfilePageState extends State<ProfilePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Profil Akun'),
+        title: const Text('Profil Akun'),
         backgroundColor: Colors.blue[700],
         elevation: 0,
         actions: [
           if (!_isEditing)
             IconButton(
-              icon: Icon(Icons.edit),
+              icon: const Icon(Icons.edit),
               onPressed: () {
                 setState(() {
                   _isEditing = true;
@@ -56,7 +36,7 @@ class _ProfilePageState extends State<ProfilePage> {
         ],
       ),
       body: SingleChildScrollView(
-        padding: EdgeInsets.all(16),
+        padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -88,7 +68,7 @@ class _ProfilePageState extends State<ProfilePage> {
                           shape: BoxShape.circle,
                           color: Colors.blue[700],
                         ),
-                        child: Icon(
+                        child: const Icon(
                           Icons.camera_alt,
                           color: Colors.white,
                           size: 20,
@@ -99,186 +79,152 @@ class _ProfilePageState extends State<ProfilePage> {
               ),
             ),
 
-            SizedBox(height: 24),
+            const SizedBox(height: 24),
 
             // Name Field
-            Text(
-              'Nama',
-              style: TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.bold,
-                color: Colors.grey[600],
-              ),
-            ),
-            SizedBox(height: 8),
+            _buildLabel("Nama"),
+            const SizedBox(height: 8),
             _isEditing
-                ? TextFormField(
-                    controller: _nameController,
-                    decoration: InputDecoration(
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      contentPadding: EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 14,
-                      ),
-                    ),
-                  )
-                : Container(
-                    width: double.infinity,
-                    padding: EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-                    decoration: BoxDecoration(
-                      border: Border.all(color: Colors.grey[300]!),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Text(
-                      _nameController.text,
-                      style: TextStyle(fontSize: 16),
-                    ),
-                  ),
+                ? _buildTextField(_nameController)
+                : _buildReadOnlyBox(_nameController.text),
 
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
 
             // Email Field
-            Text(
-              'Email',
-              style: TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.bold,
-                color: Colors.grey[600],
-              ),
-            ),
-            SizedBox(height: 8),
+            _buildLabel("Email"),
+            const SizedBox(height: 8),
             _isEditing
-                ? TextFormField(
-                    controller: _emailController,
-                    decoration: InputDecoration(
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      contentPadding: EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 14,
-                      ),
-                    ),
-                  )
-                : Container(
-                    width: double.infinity,
-                    padding: EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-                    decoration: BoxDecoration(
-                      border: Border.all(color: Colors.grey[300]!),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Text(
-                      _emailController.text,
-                      style: TextStyle(fontSize: 16),
-                    ),
-                  ),
+                ? _buildTextField(_emailController)
+                : _buildReadOnlyBox(_emailController.text),
 
-            SizedBox(height: 32),
+            const SizedBox(height: 32),
 
-            // Edit Profile Button (when not editing)
+            // Edit or Save Button
             if (!_isEditing)
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: () {
-                    setState(() {
-                      _isEditing = true;
-                    });
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.blue[700],
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                  ),
-                  child: Padding(
-                    padding: EdgeInsets.symmetric(vertical: 16),
-                    child: Text('Edit Profile', style: TextStyle(fontSize: 16)),
-                  ),
-                ),
-              ),
-
-            // Save Button (when editing)
-            if (_isEditing)
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: () {
-                    setState(() {
-                      _isEditing = false;
-                    });
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text('Profil berhasil disimpan'),
-                        backgroundColor: Colors.green,
-                      ),
-                    );
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.green,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                  ),
-                  child: Padding(
-                    padding: EdgeInsets.symmetric(vertical: 16),
-                    child: Text('Simpan', style: TextStyle(fontSize: 16)),
-                  ),
-                ),
-              ),
-
-            SizedBox(height: 16),
-
-            // Logout Button
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
+              _buildButton(
+                text: "Edit Profile",
+                color: Colors.blue[700]!,
                 onPressed: () {
-                  showDialog(
-                    context: context,
-                    builder: (BuildContext context) {
-                      return AlertDialog(
-                        title: Text('Keluar Akun'),
-                        content: Text('Apakah Anda yakin ingin keluar?'),
-                        actions: [
-                          TextButton(
-                            onPressed: () {
-                              Navigator.of(context).pop();
-                            },
-                            child: Text('Batal'),
-                          ),
-                          TextButton(
-                            onPressed: () {
-                              Navigator.of(context).pop();
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: Text('Anda telah keluar'),
-                                  backgroundColor: Colors.blue,
-                                ),
-                              );
-                            },
-                            child: Text('Keluar'),
-                          ),
-                        ],
-                      );
-                    },
+                  setState(() {
+                    _isEditing = true;
+                  });
+                },
+              ),
+            if (_isEditing)
+              _buildButton(
+                text: "Simpan",
+                color: Colors.green,
+                onPressed: () {
+                  setState(() {
+                    _isEditing = false;
+                  });
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Profil berhasil disimpan'),
+                      backgroundColor: Colors.green,
+                    ),
                   );
                 },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.red,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                ),
-                child: Padding(
-                  padding: EdgeInsets.symmetric(vertical: 16),
-                  child: Text('Keluar Akun', style: TextStyle(fontSize: 16)),
-                ),
               ),
+
+            const SizedBox(height: 16),
+
+            // Logout Button
+            _buildButton(
+              text: "Keluar Akun",
+              color: Colors.red,
+              onPressed: () {
+                showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return AlertDialog(
+                      title: const Text('Keluar Akun'),
+                      content: const Text('Apakah Anda yakin ingin keluar?'),
+                      actions: [
+                        TextButton(
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                          child: const Text('Batal'),
+                        ),
+                        TextButton(
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text('Anda telah keluar'),
+                                backgroundColor: Colors.blue,
+                              ),
+                            );
+                          },
+                          child: const Text('Keluar'),
+                        ),
+                      ],
+                    );
+                  },
+                );
+              },
             ),
           ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildLabel(String text) {
+    return Text(
+      text,
+      style: TextStyle(
+        fontSize: 14,
+        fontWeight: FontWeight.bold,
+        color: Colors.grey[600],
+      ),
+    );
+  }
+
+  Widget _buildTextField(TextEditingController controller) {
+    return TextFormField(
+      controller: controller,
+      decoration: InputDecoration(
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 16,
+          vertical: 14,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildReadOnlyBox(String text) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+      decoration: BoxDecoration(
+        border: Border.all(color: Colors.grey[300]!),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Text(text, style: const TextStyle(fontSize: 16)),
+    );
+  }
+
+  Widget _buildButton({
+    required String text,
+    required Color color,
+    required VoidCallback onPressed,
+  }) {
+    return SizedBox(
+      width: double.infinity,
+      child: ElevatedButton(
+        onPressed: onPressed,
+        style: ElevatedButton.styleFrom(
+          backgroundColor: color,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 16),
+          child: Text(text, style: const TextStyle(fontSize: 16)),
         ),
       ),
     );

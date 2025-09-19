@@ -1,4 +1,7 @@
+// ignore_for_file: deprecated_member_use, use_build_context_synchronously
+
 import 'package:flutter/material.dart';
+import 'package:independent_absensi/api/auth_service.dart';
 import 'package:independent_absensi/extensions/navigator.dart';
 import 'package:independent_absensi/views/register_screen.dart';
 
@@ -134,9 +137,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       Align(
                         alignment: Alignment.centerRight,
                         child: TextButton(
-                          onPressed: () {
-                            // TODO: Implement reset password
-                          },
+                          onPressed: () {},
                           child: const Text(
                             "Reset Password",
                             style: TextStyle(color: Colors.black87),
@@ -145,8 +146,39 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                       const SizedBox(height: 12),
                       ElevatedButton(
-                        onPressed: () {
-                          // TODO: Implement login
+                        onPressed: () async {
+                          final email = emailController.text.trim();
+                          final password = passwordController.text.trim();
+
+                          if (email.isEmpty || password.isEmpty) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text("Email & Password harus diisi"),
+                              ),
+                            );
+                            return;
+                          }
+
+                          final result = await AuthService.login(
+                            email: email,
+                            password: password,
+                          );
+
+                          if (result['success'] == true) {
+                            // navigasi ke dashboard
+                            Navigator.pushReplacementNamed(
+                              context,
+                              "/dashboard",
+                            );
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(
+                                  result['message'] ?? "Login gagal",
+                                ),
+                              ),
+                            );
+                          }
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: const Color(0xFF5585F8),
